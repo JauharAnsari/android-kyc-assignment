@@ -23,6 +23,13 @@ import com.example.kycflow.presentation.viewmodel.AccountsViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,33 +45,17 @@ fun AccountsScreen(
     val isPaginating by viewModel.isPaginating.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
     
-    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val tabs = listOf(stringResource(R.string.tab_verified), stringResource(R.string.tab_pending))
-    
-    // Filter customers by selected tab
-    val filteredCustomers = customers.filter { customer ->
-        if (selectedTabIndex == 0) customer.isVerified else !customer.isVerified
-    }
-
     val chips = listOf("All", "Savings", "Current", "NRI")
     
-    val gridState = rememberLazyGridState()
-
-    // Observe scroll state for pagination
-    LaunchedEffect(gridState, filteredCustomers.size) {
-        snapshotFlow { gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
-            .collect { lastIndex ->
-                // Load more when user scrolls near the bottom (e.g., within 4 items of the end)
-                if (lastIndex != null && filteredCustomers.isNotEmpty() && lastIndex >= filteredCustomers.size - 4) {
-                    viewModel.loadMoreCustomers()
-                }
-            }
-    }
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
+    val selectedTabIndex = pagerState.currentPage
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Digital Bank") },
+                title = { Text(text = "KYCFlow") },
                 windowInsets = WindowInsets(0, 0, 0, 0),
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
@@ -73,12 +64,43 @@ fun AccountsScreen(
             )
         },
         bottomBar = {
-            TabRow(selectedTabIndex = selectedTabIndex) {
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                indicator = { tabPositions ->
+                    if (selectedTabIndex < tabPositions.size) {
+                        Box(
+                            modifier = Modifier
+                                .tabIndicatorOffset(tabPositions[selectedTabIndex])
+                                .fillMaxHeight(),
+                            contentAlignment = Alignment.TopCenter
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(3.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = RoundedCornerShape(bottomStart = 3.dp, bottomEnd = 3.dp)
+                                    )
+                            )
+                        }
+                    }
+                }
+            ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = { Text(title) }
+                        onClick = { 
+                            coroutineScope.launch { 
+                                pagerState.animateScrollToPage(index) 
+                            } 
+                        },
+                        text = { 
+                            Text(
+                                text = title,
+                                fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal
+                            ) 
+                        }
                     )
                 }
             }
@@ -114,53 +136,74 @@ fun AccountsScreen(
                 }
             }
             
-            Box(modifier = Modifier.fillMaxSize().weight(1f)) {
-                if (isLoading && customers.isEmpty()) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                } else if (errorMessage != null && customers.isEmpty()) {
-                    Column(
-                        modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = errorMessage ?: "Error", color = MaterialTheme.colorScheme.error)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(onClick = { viewModel.loadInitialData() }) {
-                            Text("Retry")
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize().weight(1f)
+            ) { page ->
+                val pageCustomers = customers.filter { customer ->
+                    if (page == 0) customer.isVerified else !customer.isVerified
+                }
+                
+                val gridState = rememberLazyGridState()
+
+                // Observe scroll state for pagination
+                LaunchedEffect(gridState, pageCustomers.size) {
+                    snapshotFlow { gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                        .collect { lastIndex ->
+                            if (lastIndex != null && pageCustomers.isNotEmpty() && lastIndex >= pageCustomers.size - 4) {
+                                viewModel.loadMoreCustomers()
+                            }
                         }
-                    }
-                } else if (filteredCustomers.isEmpty()) {
-                    Text(
-                        text = "No customers found.",
-                        modifier = Modifier.align(Alignment.Center),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.Gray
-                    )
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        state = gridState,
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        items(
-                            items = filteredCustomers,
-                            key = { it.id }
-                        ) { customer ->
-                            CustomerCard(
-                                customer = customer,
-                                onClick = { onNavigateToDetails(customer.id) }
-                            )
+                }
+
+                Box(modifier = Modifier.fillMaxSize()) {
+                    if (isLoading && customers.isEmpty()) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    } else if (errorMessage != null && customers.isEmpty()) {
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = errorMessage ?: "Error", color = MaterialTheme.colorScheme.error)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(onClick = { viewModel.loadInitialData() }) {
+                                Text("Retry")
+                            }
                         }
-                        
-                        if (isPaginating) {
-                            item(span = { GridItemSpan(maxLineSpan) }) {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
+                    } else if (pageCustomers.isEmpty()) {
+                        Text(
+                            text = "No customers found.",
+                            modifier = Modifier.align(Alignment.Center),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.Gray
+                        )
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            state = gridState,
+                            contentPadding = PaddingValues(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            items(
+                                items = pageCustomers,
+                                key = { it.id }
+                            ) { customer ->
+                                CustomerCard(
+                                    customer = customer,
+                                    onClick = { onNavigateToDetails(customer.id) }
+                                )
+                            }
+                            
+                            if (isPaginating) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
                                 }
                             }
                         }
