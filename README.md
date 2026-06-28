@@ -122,7 +122,7 @@ git clone https://github.com/JauharAnsari/android-kyc-assignment.git
 
 ---
 
-# 📥 Download APK
+# Download APK
 
 You can download and install the latest APK from the link below:
 
