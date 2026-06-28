@@ -128,6 +128,3 @@ git clone https://github.com/JauharAnsari/android-kyc-assignment.git
 
 Android Developer
 
----
-
-This project was developed as part of the Signzy Android Assignment.
