@@ -1,59 +1,133 @@
-# KYCFlow (Android KYC Assignment)
+# KYCFlow
 
-KYCFlow is a modern, fully-functional Android application designed to manage and verify customer KYC (Know Your Customer) information. This assignment project showcases modern Android development practices, emphasizing clean architecture, reactive programming, and a declarative UI.
+KYCFlow is an Android app built as part of a KYC (Know Your Customer) assignment. The app lets users view customer accounts, check KYC details, and capture documents using the device camera.
 
-## 🚀 Features
-
-- **Customer Management**: View lists of customers categorized by their verification status (Pending vs. Verified).
-- **Intuitive UI**: Smooth, swipeable tabs and polished animations built entirely with Jetpack Compose.
-- **Detailed Profiles**: In-depth account details screen for reviewing individual customer data.
-- **Camera Integration**: Built-in camera functionality (CameraX) for capturing KYC documents or user photos.
-- **Offline Support**: Local caching using Room Database to ensure data persistence and offline capabilities.
-- **Robust Networking**: API interactions handled efficiently with Retrofit and OkHttp.
-
-## 🛠️ Tech Stack & Architecture
-
-This project is built using the latest Android tech stack and follows the **MVVM (Model-View-ViewModel)** architectural pattern along with Clean Architecture principles.
-
-- **[Kotlin](https://kotlinlang.org/)**: 100% Kotlin codebase.
-- **[Jetpack Compose](https://developer.android.com/jetpack/compose)**: Android’s modern toolkit for building native UI declaratively.
-- **[Dagger Hilt](https://dagger.dev/hilt/)**: Dependency injection for scalable and testable architecture.
-- **[Coroutines & Flow](https://kotlinlang.org/docs/coroutines-overview.html)**: Asynchronous programming and reactive data streams.
-- **[Room Database](https://developer.android.com/training/data-storage/room)**: SQLite object mapping library for local data caching.
-- **[Retrofit](https://square.github.io/retrofit/) & [OkHttp](https://square.github.io/okhttp/)**: Type-safe HTTP client for network requests.
-- **[CameraX](https://developer.android.com/training/camerax)**: Jetpack support library for camera app development.
-- **[Coil](https://coil-kt.github.io/coil/)**: Fast, lightweight image loading library backed by Kotlin Coroutines.
-- **[Navigation Compose](https://developer.android.com/jetpack/compose/navigation)**: Routing and screen transitions.
-
-## 📁 Project Structure
-
-The project is modularized by layer (Data, Domain, Presentation) to maintain a clear separation of concerns:
-
-- **`data/`**: Contains API services, Room DAOs, repositories implementations, and data mappers.
-- **`domain/`**: Houses the core business logic, domain models (e.g., `Customer`), and repository interfaces.
-- **`presentation/`**: Contains the UI layer components including Compose screens (`AccountsScreen`, `AccountDetailsScreen`, `CameraScreen`), view models, navigation routes, and custom UI components/theme.
-
-## ⚙️ Getting Started
-
-### Prerequisites
-- Android Studio (Koala or later recommended)
-- Minimum SDK: 24 (Android 7.0)
-- Target SDK: 36
-
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/JauharAnsari/android-kyc-assignment.git
-   ```
-2. Open the project in **Android Studio**.
-3. Let Gradle sync and download the dependencies.
-4. Build and run the app on an emulator or physical device.
-
-## 📸 Screenshots & Highlights
-
-- **Accounts Dashboard**: Displays a paginated list of accounts with filter chips and a swipeable tab layout (Pending/Verified).
-- **KYC Details**: View detailed information about specific customers.
-- **Document Capture**: A seamless camera interface to quickly capture verification documents.
+The project is built using **Kotlin**, **Jetpack Compose**, **MVVM**, **Hilt**, **Room Database**, and **Retrofit**.
 
 ---
-*Developed as part of the Signzy Android Assignment.*
+
+## Features
+
+* View customer accounts
+* Separate **Pending** and **Verified** customers
+* See complete customer details
+* Capture KYC documents using CameraX
+* Store data locally with Room Database
+* Fetch data from API using Retrofit
+* Support for both Light and Dark mode
+
+---
+
+## Tech Stack
+
+* Kotlin
+* Jetpack Compose
+* MVVM Architecture
+* Dagger Hilt
+* Room Database
+* Retrofit
+* OkHttp
+* Kotlin Coroutines & Flow
+* CameraX
+* Coil
+* Navigation Compose
+
+---
+
+## Project Structure
+
+```text
+data/
+domain/
+presentation/
+```
+
+### data/
+
+* API
+* Room Database
+* Models
+* Mappers
+* Local and Remote Data Source
+
+### domain/
+
+* Domain Models
+* Repository Interfaces
+* Business Logic
+
+### presentation/
+
+* Screens
+* ViewModels
+* Navigation
+* Components
+* Theme
+
+---
+
+## Requirements
+
+* Android Studio (Latest version recommended)
+* Min SDK: 24
+* Target SDK: 36
+
+---
+
+## How to Run
+
+1. Clone the repository.
+
+```bash
+git clone https://github.com/JauharAnsari/android-kyc-assignment.git
+```
+
+2. Open the project in Android Studio.
+3. Wait for Gradle Sync.
+4. Run the app on an emulator or Android device.
+
+---
+
+# 📸 Screenshots
+
+## ☀️ Light Mode
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2befffad-c07a-4abd-8e11-d5bf4cc2d783" width="30%" alt="Light 1"/>
+  <img src="https://github.com/user-attachments/assets/ba3da1c1-6294-4d8b-8bf9-a01897418588" width="30%" alt="Light 2"/>
+  <img src="https://github.com/user-attachments/assets/aad45140-b89f-4fc3-9f54-6b6a2786f9ce" width="30%" alt="Light 3"/>
+</p>
+
+## 🌙 Dark Mode
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/221bcb4b-5411-4611-a45c-59921d6001ee" width="30%" alt="Dark 1"/>
+  <img src="https://github.com/user-attachments/assets/cedb5da4-703b-4ef8-b909-aa68475b73c8" width="30%" alt="Dark 2"/>
+  <img src="https://github.com/user-attachments/assets/e1c1a9cf-63ce-4c77-bdad-153301d43678" width="30%" alt="Dark 3"/>
+</p>
+
+---
+
+## Libraries Used
+
+* Jetpack Compose
+* Navigation Compose
+* Hilt
+* Retrofit
+* OkHttp
+* Room
+* CameraX
+* Coil
+* Kotlin Coroutines & Flow
+
+---
+
+## Author
+
+**Md Jauhar Ghyas Ansari**
+
+Android Developer
+
+---
+
+This project was developed as part of the Signzy Android Assignment.
