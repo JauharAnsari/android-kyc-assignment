@@ -122,6 +122,16 @@ git clone https://github.com/JauharAnsari/android-kyc-assignment.git
 
 ---
 
+# 📥 Download APK
+
+You can download and install the latest APK from the link below:
+
+👉 **[Download KYCFlow APK](https://drive.google.com/file/d/1xEechoFTMX7nR_buJ26Rb7E_45h2yIOY/view?usp=sharing)**
+
+> If your browser shows a security warning, click **Download anyway** to install the APK.
+
+---
+
 ## Author
 
 **Md Jauhar Ghyas Ansari**
